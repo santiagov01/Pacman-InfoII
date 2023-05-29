@@ -3,5 +3,8 @@
         <file>pacman1.png</file>
         <file>eat.mp3</file>
         <file>pacman-sprite.png</file>
+        <file>especialfood.png</file>
+        <file>lose.mp3</file>
+        <file>buttontest-2.png.png</file>
     </qresource>
 </RCC>

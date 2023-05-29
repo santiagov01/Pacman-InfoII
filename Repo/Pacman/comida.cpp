@@ -20,11 +20,11 @@ void Comida::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
         painter->setPen(Qt::NoPen);
         painter->drawEllipse(boundingRect());
     }else if(tipo == 2){
-//        QPixmap pixmap(":/imagen/BONUS.png");
-//        painter->drawPixmap(boundingRect(),pixmap,pixmap.rect());
-        painter->setBrush(Qt::red);
-        painter->setPen(Qt::NoPen);
-        painter->drawEllipse(boundingRect());
+        QPixmap pixmap(":/especialfood.png");
+        painter->drawPixmap(boundingRect(),pixmap,pixmap.rect());
+//        painter->setBrush(Qt::red);
+//        painter->setPen(Qt::NoPen);
+//        painter->drawEllipse(boundingRect());
     }
 
 }
@@ -32,11 +32,13 @@ void Comida::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 QRectF Comida::boundingRect() const
 {
     unsigned short int a_normal = 4;
-    unsigned short int a_big = 16;
+    unsigned short int a_big = 16, special = 12;
     if(tipo == 0){
         return QRectF(-a_normal/2,-a_normal/2, a_normal, a_normal);//definir tamaño de la comida
-    }else if (tipo == 1 || tipo == 2){
+    }else if (tipo == 1){
         return QRectF(-a_big/2, -a_big/2, a_big,a_big);
+    }else if (tipo == 2){
+        return QRectF(-special/2,-special/2,special,special);
     }
     return QRectF(-a_normal/2,-a_normal/2, a_normal, a_normal);
 }

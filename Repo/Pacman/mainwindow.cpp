@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
+#include "lose.h"
 
 #include <QDebug>
 MainWindow::MainWindow(QWidget *parent)
@@ -38,26 +38,12 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(view);
 
 
+    //configuraciones iniciales
     view->scale(1.2,1.2);
     scene->setBackgroundBrush(Qt::black);
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     //------cargar elementos del archivo o matriz-----
-    //definir dimensiones de matriz;
-//    paredes_total.push_back(new Paredes(0,0));
-//    scene->addItem(paredes_total.back());
-//    paredes_total.push_back(new Paredes(0,32));
-//    scene->addItem(paredes_total.back());
-//    paredes_total.push_back(new Paredes(0,64));
-//    scene->addItem(paredes_total.back());
-
-//    comida_normal.push_back((new Comida(20,20,0)));
-//    scene->addItem(comida_normal.back());
-//    comida_normal.back()->setPos(32+16,32+16);
-
-//    comida_big.push_back((new Comida(20,20,1)));
-//    scene->addItem(comida_big.back());
-//    comida_big.back()->setPos(32+16,64+16);
     Display_Mapa_Inicio();
 
     //-----Crear Pacman-----
@@ -65,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
     scene->addItem(pacman);
     //tiempo
     temp = new QTimer();
-    tiempo = 50;
+    tiempo = 10;
     //-----Conexiones-----
     connect(pacman,&Personaje::moviendo,this,&MainWindow::EvaluarComer);
 
@@ -74,21 +60,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     //------Puntaje en Pantalla-------
 
-//    display_puntaje = new QLabel(this);
-//    display_puntaje->setGeometry(300,10,200,200);
-//        //Cambiar Color
-//    QPalette palette = display_puntaje->palette();
-//    palette.setColor(QPalette::WindowText, Qt::white);
-//    display_puntaje->setPalette(palette);
-//        //poner Texto
-//    QString msg = QString("PUNTAJE: %1").arg(puntuacion);
-//    display_puntaje->setText(msg);
-//        //Definir Fuente
-//    QFont font("Gill Sans Ultra Bold Condensed", 20, QFont::Bold);
-//    font.setPointSize(20);
-//   // Cambiar la fuente del QLabel
-//    display_puntaje->setFont(font);
-//    scene->addWidget(display_puntaje);
     display_puntaje = new QGraphicsTextItem();
     //definir texto
     QString msg = QString("PUNTAJE: %1").arg(puntuacion);
@@ -101,7 +72,8 @@ MainWindow::MainWindow(QWidget *parent)
     display_puntaje->setFont(font);
 
     scene->addItem(display_puntaje);
-    display_puntaje->setPos(300,0);
+    display_puntaje->setPos(220,-5);
+    pacman->sprite();
     //scene->addText(msg);
 
     //----Temporizador en Pantalla------
@@ -115,17 +87,25 @@ MainWindow::MainWindow(QWidget *parent)
     font2.setPointSize(10);
     display_time->setFont(font2);
     scene->addItem(display_time);
-    display_time->setPos(100,10);
+    display_time->setPos(50,0);
+
     //--Conexion temporizador----
     connect(temp, SIGNAL(timeout()), this, SLOT(actualizarTiempo()));
     temp->start(1000);
 
-    //-----sonido----
-    player = new QMediaPlayer();
+    //-------------------AUDIO--------------
+    //Sonido de comer
+    player = new QMediaPlayer(this);
+    audio = new QAudioOutput();
     QString projectPath = QCoreApplication::applicationDirPath();
-    QString path_audio = "qrc:/eat.mp3";
-    qDebug() << "URL local del proyecto: " << projectPath;
-    player->setSource(QUrl::fromLocalFile(projectPath+path_audio));
+    player->setSource(QUrl::fromLocalFile("qrc:/eat.mp3"));
+    audio->setVolume(0.5);
+    player->setAudioOutput(audio);
+
+    player->play();
+    //Sonido de fonod
+
+    //Sonido de perder
 
     //------Objetos Especiales---------------
     srand(time(NULL));
@@ -161,7 +141,7 @@ void MainWindow::EvaluarComer()
             QString msg = QString("PUNTAJE: %1").arg(puntuacion);
             display_puntaje->setPlainText(msg);
             player->play();
-            qDebug() << player->errorString();
+
 
             break;
         }
@@ -234,7 +214,7 @@ void MainWindow::reiniciar()
 {
     qreal posx;
     qreal posy;
-    tiempo = 50;
+    tiempo = 10;
     QString msg_time = QString("Tiempo Restante: %1").arg(tiempo);
     display_time->setPlainText(msg_time);
     puntuacion = 0;
@@ -249,7 +229,12 @@ void MainWindow::reiniciar()
     foreach(Comida *obj, comida_normal) {
         delete obj;
     }
+    foreach(Comida *obj, comida_especial) {
+        delete obj;
+    }
+    comida_especial.clear();
     comida_normal.clear();
+    comida_big.clear();
     for(int n = 0; n< mapa.size(); n++){
         for(int m = 0; m< mapa[0].size();m++){
             posx = m*32;
@@ -277,32 +262,42 @@ void MainWindow::reiniciar()
 void MainWindow::actualizarTiempo()
 {
     tiempo--;
+    QString msg_time = QString("Tiempo Restante: %1").arg(tiempo);
+    display_time->setPlainText(msg_time);
     if(tiempo == 0){
         //codigo para reiniciar
-
+        Lose ventana_perder;
+        ventana_perder.setModal(true);
+        ventana_perder.exec();
+        //incluir sonido de perder
         reiniciar();
         pacman->reiniciar_pos();
         //Display_Mapa_Inicio();
-    }else{
-        QString msg_time = QString("Tiempo Restante: %1").arg(tiempo);
-        display_time->setPlainText(msg_time);
+    }else if(comida_normal.empty() && comida_big.empty()){
+        Win ventana_ganar;
+        ventana_ganar.setModal(true);
+        ventana_ganar.exec();
+
+        reiniciar();
+        pacman->reiniciar_pos();
     }
 }
 
 void MainWindow::aparecer_especial()
 {
-    // Generar el primer número aleatorio entre 1 y 15
-    int numero1 = std::rand() % 14 + 2;
 
-    // Generar el segundo número aleatorio entre 1 y 18
-    int numero2 = std::rand() % 17 + 2;
+    int numero1 = std::rand() %(14-1) + 1;
+
+    int numero2 = std::rand() %(14-1) + 1;
     int numero3 = std::rand() %2;
+
+    qreal newposx=(numero1)*32+16, newposy = numero2*32+16;
+//    if(mapa.at(numero1-1).at(numero2-1) == 0 || mapa.at(numero1-1).at(numero2-1) == 2)return;
+//    qDebug() << "Accediendo al valor[" << numero1 << "][" << numero2 << " = " << mapa.at(numero1).at(numero2);
     if(numero3>1)return;
-    comida_especial.push_back((new Comida(20,20,1)));
+    comida_especial.push_back((new Comida(20,20,2)));
+    comida_especial.back()->setPos(newposx,newposy);
     scene->addItem(comida_especial.back());
-    comida_especial.back()->setPos(numero1*32+16,numero2*32+16);
-
-
 }
 
 

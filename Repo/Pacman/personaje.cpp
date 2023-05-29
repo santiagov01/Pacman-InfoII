@@ -17,7 +17,7 @@ Personaje::Personaje(double x, double y)
     this->alto = 20;
     setPos(posx,posy);
     AnimacionTimer=new QTimer();
-    AnimacionTimer->start(40);
+    AnimacionTimer->start(200);
     connect(AnimacionTimer,&QTimer::timeout,this,&Personaje::actualizar_sprite);
 
 }

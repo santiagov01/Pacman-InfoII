@@ -16,7 +16,9 @@
 #include <QTimer>
 #include <QGraphicsTextItem>
 #include <QMediaPlayer>
+#include <QAudioOutput>
 
+#include "win.h"
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -54,6 +56,7 @@ private:
 
     Personaje* pacman;
 
+    QAudioOutput* audio;
     double puntuacion;
 
 //    QLabel* display_puntaje;

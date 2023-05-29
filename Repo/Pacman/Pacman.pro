@@ -11,20 +11,26 @@ CONFIG += c++17
 SOURCES += \
     auxiliar.cpp \
     comida.cpp \
+    lose.cpp \
     main.cpp \
     mainwindow.cpp \
     paredes.cpp \
-    personaje.cpp
+    personaje.cpp \
+    win.cpp
 
 HEADERS += \
     auxiliar.h \
     comida.h \
+    lose.h \
     mainwindow.h \
     paredes.h \
-    personaje.h
+    personaje.h \
+    win.h
 
 FORMS += \
-    mainwindow.ui
+    lose.ui \
+    mainwindow.ui \
+    win.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
