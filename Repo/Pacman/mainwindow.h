@@ -73,7 +73,7 @@ private:
     //----sonido----
     QMediaPlayer *player;
 
-
+    double tiempoTotal;
 
 };
 #endif // MAINWINDOW_H

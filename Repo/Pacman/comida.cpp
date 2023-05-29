@@ -22,9 +22,7 @@ void Comida::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     }else if(tipo == 2){
         QPixmap pixmap(":/especialfood.png");
         painter->drawPixmap(boundingRect(),pixmap,pixmap.rect());
-//        painter->setBrush(Qt::red);
-//        painter->setPen(Qt::NoPen);
-//        painter->drawEllipse(boundingRect());
+
     }
 
 }

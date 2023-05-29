@@ -7,6 +7,11 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    tiempoTotal = 60;
+    /* 0 => pared
+     * 1 => Comida
+     * 2 => Comida grande
+    */
     mapa = {
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {0, 1, 2, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0},
@@ -51,7 +56,7 @@ MainWindow::MainWindow(QWidget *parent)
     scene->addItem(pacman);
     //tiempo
     temp = new QTimer();
-    tiempo = 10;
+    tiempo = tiempoTotal;
     //-----Conexiones-----
     connect(pacman,&Personaje::moviendo,this,&MainWindow::EvaluarComer);
 
@@ -74,7 +79,7 @@ MainWindow::MainWindow(QWidget *parent)
     scene->addItem(display_puntaje);
     display_puntaje->setPos(220,-5);
     pacman->sprite();
-    //scene->addText(msg);
+
 
     //----Temporizador en Pantalla------
     display_time = new QGraphicsTextItem();
@@ -87,7 +92,7 @@ MainWindow::MainWindow(QWidget *parent)
     font2.setPointSize(10);
     display_time->setFont(font2);
     scene->addItem(display_time);
-    display_time->setPos(50,0);
+    display_time->setPos(50,0); //posicion del timer en pantalla
 
     //--Conexion temporizador----
     connect(temp, SIGNAL(timeout()), this, SLOT(actualizarTiempo()));
@@ -214,7 +219,7 @@ void MainWindow::reiniciar()
 {
     qreal posx;
     qreal posy;
-    tiempo = 10;
+    tiempo = tiempoTotal;
     QString msg_time = QString("Tiempo Restante: %1").arg(tiempo);
     display_time->setPlainText(msg_time);
     puntuacion = 0;
@@ -269,7 +274,7 @@ void MainWindow::actualizarTiempo()
         Lose ventana_perder;
         ventana_perder.setModal(true);
         ventana_perder.exec();
-        //incluir sonido de perder
+        //incluir sonido de perder (falto incluir eso)
         reiniciar();
         pacman->reiniciar_pos();
         //Display_Mapa_Inicio();
@@ -295,9 +300,20 @@ void MainWindow::aparecer_especial()
 //    if(mapa.at(numero1-1).at(numero2-1) == 0 || mapa.at(numero1-1).at(numero2-1) == 2)return;
 //    qDebug() << "Accediendo al valor[" << numero1 << "][" << numero2 << " = " << mapa.at(numero1).at(numero2);
     if(numero3>1)return;
-    comida_especial.push_back((new Comida(20,20,2)));
-    comida_especial.back()->setPos(newposx,newposy);
-    scene->addItem(comida_especial.back());
+    if(!(mapa.at(numero1).at(numero2) == 0 || mapa.at(numero1).at(numero2) == 2)){
+//        QList<Paredes*>::Iterator it;
+
+//        for(it = paredes_total.begin();it!=paredes_total.end();++it){
+//            if((*it)->collidesWithItem(comida_especial.back())){
+
+//            }
+//        }
+        comida_especial.push_back((new Comida(20,20,2)));
+        comida_especial.back()->setPos(newposx,newposy);
+        scene->addItem(comida_especial.back());
+    }
+
+
 }
 
 

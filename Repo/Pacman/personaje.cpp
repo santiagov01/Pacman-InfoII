@@ -3,11 +3,10 @@
 
 Personaje::Personaje(double x, double y)
 {
-    //pixmap = new QPixmap(":/pacman1.png");
+
     pixmap=new QPixmap();
 
-//    Cargar_imagen(path,&Imagenes_personaje);
-//    this->path = ":/pacman-sprite.png";
+
     this->posx=x;
     this->posy = y;
     this->puntaje = 0;
@@ -24,7 +23,6 @@ Personaje::Personaje(double x, double y)
 
 void Personaje::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,QWidget *widget){
 
-    //painter->drawPixmap(boundingRect(),*pixmap,pixmap->rect());
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
@@ -59,7 +57,7 @@ void Personaje::moveUp()
     setPos(posx, posy);
     sprite();
     emit moviendo();
-    //this->setRotation(-90);
+
 }
 
 void Personaje::moveDown()
@@ -68,7 +66,7 @@ void Personaje::moveDown()
     setPos(posx, posy);
     sprite();
     emit moviendo();
-    //this->setRotation(90);
+
 }
 
 void Personaje::moveLeft()
@@ -81,13 +79,13 @@ void Personaje::moveLeft()
     setPos(posx, posy);
     sprite();
     emit moviendo();
-    //this->setRotation(180);
+
 }
 
 void Personaje::moveRight()
 {
     posx += velocidad;
-    //setPos(posx, posy);
+
 
     if(posx> 480-16){
         posx = 8;
@@ -96,7 +94,7 @@ void Personaje::moveRight()
     setPos(posx, posy);
     sprite();
     emit moviendo();
-    //this->setRotation(0);
+
 }
 
 void Personaje::sprite()
